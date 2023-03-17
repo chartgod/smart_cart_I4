@@ -1,8 +1,8 @@
-#가상환경 navigation 실행
-$ roscore
-$ roslaunch testbot_gazebo kobuki.launch
-$ roslaunch kobuki_navigation kobuki_navigation.launch
-$ rosrun rviz rviz -d `rospack find kobuki_navigation`/rviz/kobuki_nav.rviz
+## *가상환경 navigation 실행
+#$ roscore
+#$ roslaunch testbot_gazebo kobuki.launch
+#$ roslaunch kobuki_navigation kobuki_navigation.launch
+#$ rosrun rviz rviz -d `rospack find kobuki_navigation`/rviz/kobuki_nav.rviz
 
     error
     $ roslaunch kobuki_navigation kobuki_navigation.launch
