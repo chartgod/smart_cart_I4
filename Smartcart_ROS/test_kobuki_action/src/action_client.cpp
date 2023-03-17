@@ -39,19 +39,6 @@ int main (int argc, char **argv)
     goal.target_pose.pose.orientation.z = 0.025547;
     goal.target_pose.pose.orientation.w = 0.98381429;
 
-    // move_base_msgs::MoveBaseActionGoal goal;
-    // // actionlib_msgs::GoalID cancel;
-    // goal.goal.target_pose.header.seq = 0;
-    // goal.goal.target_pose.header.stamp.sec = 0;
-    // goal.goal.target_pose.header.stamp.nsec = 0;
-    // goal.goal.target_pose.header.frame_id = "map";
-    // goal.goal.target_pose.pose.position.x = 4.0;
-    // goal.goal.target_pose.pose.position.y = 4.0;
-    // goal.goal.target_pose.pose.position.z = 0.0;
-    // goal.goal.target_pose.pose.orientation.x = 0.0;
-    // goal.goal.target_pose.pose.orientation.y = 0.0;
-    // goal.goal.target_pose.pose.orientation.z = 0.025547;
-    // goal.goal.target_pose.pose.orientation.w = 0.98381429;
     ac.sendGoal(goal);
         
     bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
