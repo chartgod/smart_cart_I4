@@ -6,6 +6,7 @@
     $ roslaunch kobuki_navigation kobuki_navigation.launch
     $ rosrun rviz rviz -d `rospack find kobuki_navigation`/rviz/kobuki_nav.rviz
 
+
 # error
 
 ### 1. $ roslaunch kobuki_navigation kobuki_navigation.launch
