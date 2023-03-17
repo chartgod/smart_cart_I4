@@ -1,0 +1,31 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="model" default="mobile_base"/>
+  <arg name="slam_methods" default="gmapping"/>
+  <arg name="configuration_basename" default="turtlebot3_lds_2d.lua"/>
+  <arg name="open_rviz" default="true"/>
+
+  <!-- TurtleBot3 -->
+  <arg name="multi_robot_name" default=""/>
+
+  <arg name="urdf_file" default="$(find xacro)/xacro --inorder '$(find kobuki_description)/urdf/kobuki_standalone.urdf.xacro'" />
+  <param name="robot_description" command="$(arg urdf_file)" />
+ 
+  
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" value="$(arg multi_robot_name)"/>
+  </node>
+
+  <!-- SLAM: Gmapping, Cartographer, Hector, Karto, Frontier_exploration, RTAB-Map -->
+  <include file="$(find testbot_gazebo)/launch/turtlebot3_$(arg slam_methods).launch">
+    <arg name="model" value="$(arg model)"/>
+    <arg name="configuration_basename" value="$(arg configuration_basename)"/>
+  </include>
+
+  <!-- rviz -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find testbot_gazebo)/rviz/turtlebot3_$(arg slam_methods).rviz"/>
+  </group>
+</launch>
