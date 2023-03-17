@@ -1,5 +1,6 @@
 # 실행
-* 가상환경 navigation 실행
+
+가상환경 navigation 실행
 
     $ roscore
     $ roslaunch testbot_gazebo kobuki.launch
