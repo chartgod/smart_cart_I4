@@ -188,7 +188,7 @@
       </plugin>
     </gazebo>
 
-    <!-- sensor -->
+    <!-- sensor --> 
     
     <gazebo reference="base_scan">
       <material>Gazebo/FlatBlack</material>
