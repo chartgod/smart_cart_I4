@@ -1,0 +1,11 @@
+<kobuki ros tools and applications>
+$ git clone https://github.com/yujinrobot/kobuki.git
+
+<kobuki slam, navigation>
+$ git clone https://github.com/oroca/rosbook_kobuki.git
+
+<GL-3 (Mechanical scanning 2D LiDAR)>
+git clone https://github.com/soslab-msd2/gl_driver_libraries.git
+
+<Kobuki UserGuideBook>
+https://www.devicemart.co.kr/goods/download?id=1063228&rank=1 
