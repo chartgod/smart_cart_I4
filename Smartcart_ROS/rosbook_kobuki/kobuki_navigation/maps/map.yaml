@@ -1,6 +1,6 @@
-image: map.pgm
+image: /home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map.pgm
 resolution: 0.050000
-origin: [-10.000000, -10.000000, 0.000000]
+origin: [-22.800000, -27.600000, 0.000000]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.196
