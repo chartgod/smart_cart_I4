@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/user1/catkin_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/kobuki/kobuki_auto_docking/include/**",
+        "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/kobuki/kobuki_bumper2pc/include/**",
+        "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/kobuki/kobuki_controller_tutorial/include/**",
+        "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/kobuki/kobuki_keyop/include/**",
+        "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/kobuki/kobuki_node/include/**",
+        "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/kobuki/kobuki_random_walker/include/**",
+        "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/kobuki/kobuki_safety_controller/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
