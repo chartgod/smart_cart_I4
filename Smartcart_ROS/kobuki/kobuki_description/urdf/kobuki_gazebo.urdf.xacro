@@ -199,10 +199,10 @@
         <ray>
           <scan>
             <horizontal>
-              <samples>360</samples>
+              <samples>180</samples> <!--360-->
               <resolution>1</resolution>
-              <min_angle>0.0</min_angle>
-              <max_angle>6.28319</max_angle>
+              <min_angle>-1.5708</min_angle> <!--90:1.5708 0.0 front:0.0rad counterclockwise-->
+              <max_angle>1.5708</max_angle> <!--180:3.14159 270:4.71239 360:6.28319-->
             </horizontal>
           </scan>
           <range>
