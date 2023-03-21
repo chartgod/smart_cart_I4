@@ -1,5 +1,15 @@
 # GL-3 (Mechanical scanning 2D LiDAR)
 
+## 프로젝트 관련
+- gl_ros_driver.launch 파일 수정
+    - 라이다 스캔 방향 조절 (단위:도 기본값 0.0)
+    - src/gl_ros_driver_node.cpp 참고
+    - $ rostopic echo /scan 으로 변경상항 확인
+```
+<param name="angle_offset" type="double" value="-90.0"/>
+```
+
+
 ## Guide
 - Installation
 ```
