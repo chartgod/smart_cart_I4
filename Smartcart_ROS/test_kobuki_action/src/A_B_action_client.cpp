@@ -6,52 +6,56 @@
 #include "move_base_msgs/MoveBaseAction.h"
 #include "move_base_msgs/MoveBaseGoal.h"
 
-#include "test_kobuki_action/Kobuki1Action.h" //
+// #include "geometry_msgs/PoseStamped.h"
 
+#include "test_kobuki_action/Kobuki1Action.h" //
 
 int main (int argc, char **argv)
 {
-    ros::init(argc, argv, "action_client");
+    ros::init(argc, argv, "A_B_action_client");
     actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base", true);
+
     ROS_INFO("Waiting for action server to start.");
     ac.waitForServer();
     ROS_INFO("Action server started, sending goal.");
     move_base_msgs::MoveBaseGoal goal;
+    
+    // actionlib::SimpleActionClient<geometry_msgs::PoseStamped> ac("/move_base_simple/goal",100);
+    // geometry_msgs::PoseStamped msg;
 
     char input;
+    double x, y;
     std::cout << "Current goal: A\nPress 'A' to stay at A, or 'B' to go to B: ";
     std::cin >> input;
     if (input == 'A') {
+        x = 2.5;
+        y = 2.5;
+    }
+    else if (input == 'B'){
+        x = -1.0;
+        y = 4.0;
+    }
     // Set new goal as A 
     goal.target_pose.header.seq = 0;
     goal.target_pose.header.stamp.sec = 0;
     goal.target_pose.header.stamp.nsec = 0;
     goal.target_pose.header.frame_id = "map";
-    goal.target_pose.pose.position.x = 2.5;
-    goal.target_pose.pose.position.y = 2.5;
+    goal.target_pose.pose.position.x = x;
+    goal.target_pose.pose.position.y = y;
     goal.target_pose.pose.position.z = 0.0;
     goal.target_pose.pose.orientation.x = 0.0;
     goal.target_pose.pose.orientation.y = 0.0;
     goal.target_pose.pose.orientation.z = 0.025547;
     goal.target_pose.pose.orientation.w = 0.98381429;       
-    }
-    if (input == 'B') {
-    // Set new goal as B
-    goal.target_pose.header.seq = 0;
-    goal.target_pose.header.stamp.sec = 0;
-    goal.target_pose.header.stamp.nsec = 0;
-    goal.target_pose.header.frame_id = "map";
-    goal.target_pose.pose.position.x = 4.0;
-    goal.target_pose.pose.position.y = 4.0;
-    goal.target_pose.pose.position.z = 0.0;
-    goal.target_pose.pose.orientation.x = 0.0;
-    goal.target_pose.pose.orientation.y = 0.0;
-    goal.target_pose.pose.orientation.z = 0.025547;
-    goal.target_pose.pose.orientation.w = 0.98381429;
-    }
-
+        
     ac.sendGoal(goal);
 
+    std::cout << "Stop : Press 'S' : ";
+    std::cin >> input;
+    if (input == 'S'){
+        ac.cancelGoal();
+    }
+    
     // Wait for the robot to reach the goal or for the goal to be cancelled
     ac.waitForResult();
     bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
@@ -68,10 +72,10 @@ int main (int argc, char **argv)
 
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) 
     {
-        ROS_INFO("I4 로봇이 목적지에 도달했어!");
+        ROS_INFO("Succeeded!");
     }
     else {
-        ROS_WARN("I4 로봇이 목적지에 도달 실패했어.");
+        ROS_WARN("Faile!");
     }
 }
 
