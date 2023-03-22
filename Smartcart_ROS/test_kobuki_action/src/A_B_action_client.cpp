@@ -10,11 +10,25 @@
 
 #include "test_kobuki_action/Kobuki1Action.h" //
 
-int main (int argc, char **argv)
-{
-    ros::init(argc, argv, "A_B_action_client");
-    actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base", true);
+#include "thread"
+using std::thread;
 
+
+
+void stop() {
+    actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base", true);
+    char input;
+    ac.waitForResult();
+    bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
+    std::cout << "Stop : Press 'S' : ";
+    std::cin >> input;
+    if (input == 'S'){
+        ac.cancelGoal();
+    }
+}
+
+void goal() {
+    actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base", true);
     ROS_INFO("Waiting for action server to start.");
     ac.waitForServer();
     ROS_INFO("Action server started, sending goal.");
@@ -22,11 +36,15 @@ int main (int argc, char **argv)
     
     // actionlib::SimpleActionClient<geometry_msgs::PoseStamped> ac("/move_base_simple/goal",100);
     // geometry_msgs::PoseStamped msg;
-
+ 
     char input;
     double x, y;
+
+    
+
     std::cout << "Current goal: A\nPress 'A' to stay at A, or 'B' to go to B: ";
     std::cin >> input;
+
     if (input == 'A') {
         x = 2.5;
         y = 2.5;
@@ -35,6 +53,7 @@ int main (int argc, char **argv)
         x = -1.0;
         y = 4.0;
     }
+    
     // Set new goal as A 
     goal.target_pose.header.seq = 0;
     goal.target_pose.header.stamp.sec = 0;
@@ -55,7 +74,7 @@ int main (int argc, char **argv)
     if (input == 'S'){
         ac.cancelGoal();
     }
-    
+
     // Wait for the robot to reach the goal or for the goal to be cancelled
     ac.waitForResult();
     bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
@@ -79,3 +98,14 @@ int main (int argc, char **argv)
     }
 }
 
+int main (int argc, char **argv)
+{
+    ros::init(argc, argv, "A_B_action_client");
+    
+    thread t1(goal);
+    thread t2(stop);
+
+    t1.join();
+    // t2.join();
+
+}
