@@ -22,7 +22,7 @@ def callback(data):
     cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
     
     # 가장 가까운 값이 일정 거리 이하일 때 경고 메시지 출력
-    if closest_distance < 0.3: #0.2m 안에 있을 경우에는 감지를 한다.
+    if closest_distance < 0.3: #0.3m 안에 있을 경우에는 감지를 한다.
         sound_msg = Sound()
         sound_msg.value = Sound.ON  # 사운드 메시지를 발행하기 위해 "ON" 값을 설정
         sound_pub.publish(sound_msg)  # 발행
