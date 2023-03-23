@@ -38,5 +38,6 @@
     <param name="lasamplerange" value="0.005"/>
     <param name="lasamplestep" value="0.005"/>
     </node>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_slam)/rviz/kobuki_slam.rviz"/>
 </launch>
 

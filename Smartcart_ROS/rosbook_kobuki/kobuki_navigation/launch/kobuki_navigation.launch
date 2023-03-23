@@ -43,5 +43,7 @@
     <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
     <remap from="odom" to="$(arg odom_topic)"/>
   </node>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_navigation)/rviz/kobuki_nav.rviz"/>
 </launch>
 

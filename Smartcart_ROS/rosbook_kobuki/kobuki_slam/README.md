@@ -5,7 +5,8 @@
     $ roscore
     $ roslaunch testbot_gazebo kobuki.launch
     $ roslaunch kobuki_slam kobuki_slam.launch
-    $ rosrun rviz rviz -d `rospack find kobuki_slam`/rviz/kobuki_slam
+    -> <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_slam)/rviz/kobuki_slam.rviz"/>
+    ~~$ rosrun rviz rviz -d `rospack find kobuki_slam`/rviz/kobuki_slam~~
 
 * 실제환경 slam 실행
     * gl lidar 연결
@@ -15,4 +16,5 @@
         
     $ roslaucnh kobuki_node minimal.launch
     $ roslaunch kobuki_slam kobuki_slam.launch
-    $ rosrun rviz rviz -d `rospack find kobuki_slam`/rviz/kobuki_slam
+    -> <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_slam)/rviz/kobuki_slam.rviz"/>
+    ~~$ rosrun rviz rviz -d `rospack find kobuki_slam`/rviz/kobuki_slam~~

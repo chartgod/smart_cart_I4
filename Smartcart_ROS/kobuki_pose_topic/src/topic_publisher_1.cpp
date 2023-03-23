@@ -1,71 +1,44 @@
+//navigation 좌표 이동
+
 #include "ros/ros.h"
 //#include "testbot_pose_topic/MsgTutorial.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "move_base_msgs/MoveBaseGoal.h"
 #include "geometry_msgs/PoseStamped.h"
+#include "move_base_msgs/MoveBaseActionGoal.h"
+
 
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "topic_publisher");
 	ros::NodeHandle nh;
 
-	// ros::Publisher ros_tutorial_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 100);//중요 토픽명 /initialpose바꿈//ros_tutorial_msg", 100);//initialpose
-	// ros::Publisher ros_tutorial_pub2 = nh.advertise<move_base_msgs::MoveBaseGoal>("/move_base/goal", 100);
-	ros::Publisher ros_tutorial_pub = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 100);
-	//ros::Publisher ros_tutorial_pub = nh.advertise<testbot_pose_topic::MsgTutorial>("ros_tutorial_msg", 100);
+	ros::Publisher ros_tutorial_pub = nh.advertise<move_base_msgs::MoveBaseActionGoal>("/move_base/goal", 100);
+	// ros::Publisher ros_tutorial_pub = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 100);
+	
 
-	ros::Rate loop_rate(10);
+	ros::Rate loop_rate(1);
 
 	// geometry_msgs::PoseWithCovarianceStamped msg;
 	// move_base_msgs::MoveBaseGoal msg2;
-	geometry_msgs::PoseStamped msg2;
+	move_base_msgs::MoveBaseActionGoal msg;
 	//int count = 0;
 
 	while(ros::ok())
 	{
-		// msg.header.seq= 0;
-		// msg.header.stamp.sec= 0;
-		// msg.header.stamp.nsec= 0;
-		// msg.header.frame_id= "map";// = {seq: 0, stamp: {secs: 0, nsecs: 0 }, frame_id: 'map'};
-		// msg.pose.pose.position.x= 1.061060;
-		// msg.pose.pose.position.y= 17.007341;
-		// msg.pose.pose.position.z= -0.001009;
-		// msg.pose.pose.orientation.x= -0.000001;
-		// msg.pose.pose.orientation.y= 0.003188;
-		// msg.pose.pose.orientation.z= 0.025547;
-		// msg.pose.pose.orientation.w= 0.98381429;
-
-		// ros_tutorial_pub.publish(msg);
-
-		// loop_rate.sleep();
-
+		msg.goal.target_pose.header.seq = 0;
+		msg.goal.target_pose.header.stamp.sec = 0;
+		msg.goal.target_pose.header.stamp.nsec = 0;
+		msg.goal.target_pose.header.frame_id = "map";
+		msg.goal.target_pose.pose.position.x = 4.0;
+		msg.goal.target_pose.pose.position.y = 4.0;
+		msg.goal.target_pose.pose.position.z = 0.0;
+		msg.goal.target_pose.pose.orientation.x = 0.0;
+		msg.goal.target_pose.pose.orientation.y = 0.0;
+		msg.goal.target_pose.pose.orientation.z = 0.025547;
+		msg.goal.target_pose.pose.orientation.w = 0.98381429;
 		
-		// msg2.target_pose.header.seq = 0;
-		// msg2.target_pose.header.stamp.sec = 0;
-		// msg2.target_pose.header.stamp.nsec = 0;
-		// msg2.target_pose.header.frame_id = 'map';
-		// msg2.target_pose.pose.position.x = 2.5;
-		// msg2.target_pose.pose.position.y = 2.0;
-		// msg2.target_pose.pose.position.z = 0.0;
-		// msg2.target_pose.pose.orientation.x = 0.0;
-		// msg2.target_pose.pose.orientation.y = 0.0;
-		// msg2.target_pose.pose.orientation.z = 0.0;
-		// msg2.target_pose.pose.orientation.w = 1.0;
-
-		msg2.header.seq = 0;
-		msg2.header.stamp.nsec = 0;
-		msg2.header.stamp.sec = 0;
-		msg2.header.frame_id = 'map';
-		msg2.pose.position.x = 1.5;
-		msg2.pose.position.y = 2.5;
-		msg2.pose.position.z = 0.0;
-		msg2.pose.orientation.x = 0.0;
-		msg2.pose.orientation.y = 0.0;
-		msg2.pose.orientation.z = 0.0;
-		msg2.pose.orientation.w = 1.0;
-		
-
-		ros_tutorial_pub.publish(msg2);
+		ros_tutorial_pub.publish(msg);
 
 		// msg.stamp = ros::Time::now();
 		// msg.data = count;
