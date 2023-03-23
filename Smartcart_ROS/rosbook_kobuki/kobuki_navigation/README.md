@@ -5,8 +5,7 @@
     $ roscore
     $ roslaunch testbot_gazebo kobuki.launch
     $ roslaunch kobuki_navigation kobuki_navigation.launch
-    -> <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_navigation)/rviz/kobuki_nav.rviz"/>
-    ~~$ rosrun rviz rviz -d `rospack find kobuki_navigation`/rviz/kobuki_nav.rviz~~
+    
 
 * 실제환경 navigation 실행
     * gl lidar 연결
@@ -16,8 +15,12 @@
 
     $ roslaucnh kobuki_node minimal.launch
     $ roslaunch kobuki_navigation kobuki_navigation.launch
-    -> <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_navigation)/rviz/kobuki_nav.rviz"/>
-    ~~$ rosrun rviz rviz -d `rospack find kobuki_navigation`/rviz/kobuki_nav.rviz~~
+    
+* kobuki_navigation.launch 수정 0323
+    
+추가 -> <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kobuki_navigation)/rviz/kobuki_nav.rviz"/>
+
+~~$ rosrun rviz rviz -d `rospack find kobuki_navigation`/rviz/kobuki_nav.rviz~~
 
 
 # error
