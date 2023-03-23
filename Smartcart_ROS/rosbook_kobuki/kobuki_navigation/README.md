@@ -14,9 +14,10 @@
         $ sudo chmod 777 /dev/ttyUSB1
         $ roslaunch gl_ros_driver gl_ros_driver.launch
         ```
-
+    ```
     $ roslaucnh kobuki_node minimal.launch
     $ roslaunch kobuki_navigation kobuki_navigation.launch
+    ```
     
 * 런치 파일에 추가
     ```
