@@ -1,47 +1,55 @@
+## dwa_local_planner는 최종적으로 이동속도 명령을 로봇에 넘기는 패키지로 이에 대한 파라미터를 설정하는 파일이다.
+
 DWAPlannerROS:
 
-# Robot Configuration Parameters - Kobuki
-  max_vel_x: 0.5  
-  min_vel_x: 0.0 
+# 로봇 파라미터 설정 Robot Configuration Parameters - Kobuki
+  max_vel_x: 5.0           # x축 최대 속도(meter/sec)  # 0.5
+  min_vel_x: 0.0           # x축 최소 속도(meter/sec)
 
   max_vel_y: 0.0  
   min_vel_y: 0.0  
 
-  max_trans_vel: 0.5 
-  min_trans_vel: 0.1  
-  trans_stopped_vel: 0.1
+  max_trans_vel: 5.0      # 최대 병진속도(meter/sec) # 0.5
+  min_trans_vel: -0.1     # 최소 병진속도(meter/sec), 음수이면 후진도 가능 # 0.1 
+  trans_stopped_vel: 0.1  # 병진 정지 속도(meter/sec)
 
-  max_rot_vel: 5.0 
-  min_rot_vel: 0.4  
-  rot_stopped_vel: 0.4
+  max_rot_vel: 5.0        # 최대 회전속도(radian/sec)
+  min_rot_vel: 0.4        # 최소 회전속도(radian/sec) 
+  rot_stopped_vel: 0.4    # 회전 정지 속도(radian/sec)
 
-  acc_lim_x: 1.0 
-  acc_lim_theta: 2.0
-  acc_lim_y: 0.0 
+  acc_lim_x: 1.0            # x축 가속도 제한(meter/sec^2) 
+  acc_lim_theta: 2.0        # theta축 각가속도 제한(radian/sec^2)
+  acc_lim_y: 0.0            # y축 가속도 제한(meter/sec^2) 
 
-# Goal Tolerance Parameters
-  yaw_goal_tolerance: 0.3 
-  xy_goal_tolerance: 0.15 
+# 목표 지점 허용오차 Goal Tolerance Parameters
+  yaw_goal_tolerance: 0.3   # yaw축 목표지점 허용오차(radian)
+  xy_goal_tolerance: 0.15   # x, y 거리 목표지점 허용오차(meter)
 
-# Forward Simulation Parameters
-  sim_time: 1.0       
-  vx_samples: 6       
-  vy_samples: 1       
-  vtheta_samples: 20  
+# 전방향 시물레이션 파라미터 Forward Simulation Parameters
+  sim_time: 1.0             # 전방향 시물레이션 궤적 시간       
+  vx_samples: 6             # x 축 속도 공간에서 탐색하는 샘플 수       
+  vy_samples: 1             # y 축 속도 공간에서 탐색하는 샘플 수       
+  vtheta_samples: 20        # theta 축 속도 공간에서 탐색하는 샘플 수  
 
-# Trajectory Scoring Parameters
-  path_distance_bias: 64.0      
-  goal_distance_bias: 24.0      
-  occdist_scale: 0.5            
-  forward_point_distance: 0.325 
-  stop_time_buffer: 0.2         
-  scaling_speed: 0.25           
-  max_scaling_factor: 0.2       
+# 궤적 스코어링 파라미터(궤적평가) Trajectory Scoring Parameters
+# 궤적 평가를 위한 비용함수에 사용될 스코어 계산은 아래와 같다.
+# cost = 
+# path_distance_bias * (distance to path from the endpoint of the trajectory in meters)
+# + goal_distance_bias * (distance to local goal from the endpoint of the trajectory in meters)
+# + occdist_scale * (maximun obstacle cost along the trajectory in obstacle cost (0-254))
+  path_distance_bias: 64.0   # 컨트롤러가 주어진 경로를 얼마나 따르는가에 대한 가중치      
+  goal_distance_bias: 24.0   # 목표지점과 제어 속도에 근접한지에 대한 가중치      
+  occdist_scale: 0.5         # 장애물 회피에 대한 가중치            
+  forward_point_distance: 0.325 # 로봇 중점과 추가 스코어링 포인트와의 거리(meter) 
+  stop_time_buffer: 0.2         # 로봇이 충돌 전 정치에 필요한 시간(sec)         
+  scaling_speed: 0.25           # 스케일링 속도(meter/sec)           
+  max_scaling_factor: 0.2       # 최대 스케일링 요소       
 
-# Oscillation Prevention Parameters
+# 우왕자와 동작 방지 파라미터Oscillation Prevention Parameters
+# Oscillation 플래그가 리셋되기 전에 로봇이 이동해야만 하는 거리
   oscillation_reset_dist: 0.05  
 
 # Debugging
-  publish_traj_pc : true
-  publish_cost_grid_pc: true
-  global_frame_id: odom
+  publish_traj_pc : true      # 이동 궤적 디버깅 설정
+  publish_cost_grid_pc: true  # costmap 디버깅 설정
+  global_frame_id: odom       # 글로벌 프레임 아이디 설정
