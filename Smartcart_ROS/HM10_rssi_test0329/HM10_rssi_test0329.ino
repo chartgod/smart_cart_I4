@@ -38,18 +38,18 @@ void loop() {
   }
   //i = 0;
   //String str = list1;
-  //const char * str3 = list1;
+  //const char * str3 = list;
   
-  int index = list.indexOf("S20 Ultra",0); // 수정중*****************************************
-  if (index > 1) {
-    Serial.println(list[9,index]);
-  }
+  //int index = list.indexOf("S20 Ultra",0); // 수정중*****************************************
+  //if (index > 1) {
+  //  Serial.println(list[9,index]);
+  //}
   
   
   //Serial.find('+');
     
   
-  //Str0.data = c;
+  //Str0.data = str3;
   //chatter.publish(&Str0);
   //nh.spinOnce();
 
