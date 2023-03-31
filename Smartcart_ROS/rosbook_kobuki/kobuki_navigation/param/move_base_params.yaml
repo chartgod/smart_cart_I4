@@ -1,7 +1,20 @@
+## 모션 계획을 총괄하는 move_base의 파라미터 설정 파일
+
+# move_base가 비활성화 상태일 때 costmap 노드를 정지시킬 것 인가에 대한 선택
 shutdown_costmaps: false
+# 로봇 베이스에 속도 명령을 주는 컨트롤 반복의 주기(Hz)
 controller_frequency: 5.0
+# space-clearing 동작이 수행되기 전 컨트롤러가 컨트롤 정보를 수신 대기하는 최대 시간(sec)
 controller_patience: 3.0
+# 전역 계획의 반복 주기(Hz)
 planner_frequency: 1.0
+# space-clearing 동작이 수행되기 전 사용 가능한 계획을 찾는 데 기다리는 최대 시간(sec)
 planner_patience: 5.0
+# 복구 동작(recovery behavior)을 실행하기 전 로봇이 왔다갔다 하는 것을 허용하는 시간(sec)
 oscillation_timeout: 10.0
+# 로봇이 왔다갔다 하지 않도록 움직여야만 하는 거리(미터)
+# 아래 거리를 움직이면 oscillation_timeout은 초기화된다.
 oscillation_distance: 0.2
+
+# 복구 동작의 costmap 초기화 때 이 정해진 거리보다 먼 장애물은 지도에서 삭제된다.
+#conservative_reset_dist: 3.0

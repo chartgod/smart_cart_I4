@@ -1,8 +1,13 @@
+# 물체가 로봇과 이 거릿값에 해당되는 거리 안에 있을 때 장애물로 처리한다.
 obstacle_range: 2.5
+# 센서값 중 이 거리 이상의 데이터는 자유공간(freespace)으로 처리한다.
 raytrace_range: 3.0
+# 로봇의 반지름을 기재한다. 여기서는 robot_radius 대신에 footprint를 이용한다.
 robot_radius: 0.18
+# 인플레이션 영역의 반지름으로 장애물에 접근 못하게 하는 영역이다.
 inflation_radius: 0.50
 
+# 사용할 costmap을 voxel(voxel-grid)와 costmap(costmap_2d) 중에서 선택한다.
 map_type: voxel
 origin_z: 0.0
 z_resolution: 0.2
@@ -10,6 +15,8 @@ z_voxels: 2
 publish_voxel_map: false
 max_obstacle_height: 0.60
 
+# 사용하는 센서 시정
 observation_sources: scan bump
+# 레이저 스캔의 데이터형, 토픽, 코스트맵에 반영, 최소 장애물 높이 설정
 scan: {data_type: LaserScan, topic: scan, marking: true, clearing: true, min_obstacle_height: 0.25, max_obstacle_height: 0.35}
 bump: {data_type: PointCloud2, topic: mobile_base/sensors/bumper_pointcloud, marking: true, clearing: false, min_obstacle_height: 0.0, max_obstacle_height: 0.15}

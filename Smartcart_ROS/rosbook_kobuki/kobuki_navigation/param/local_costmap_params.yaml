@@ -1,11 +1,11 @@
 local_costmap:
-   global_frame: map
-   robot_base_frame: base_footprint
-   update_frequency: 5.0
-   publish_frequency: 2.0
-   static_map: false
-   rolling_window: true
-   width: 4.0
-   height: 4.0
-   resolution: 0.05
-   transform_tolerance: 0.5
+   global_frame: map                   # 지도 프레임 설정
+   robot_base_frame: base_footprint    # 로봇 베이스 프레임 설정
+   update_frequency: 5.0               # 갱신 주기
+   publish_frequency: 2.0              # 퍼블리시 주기
+   static_map: false                   # 주어진 지도를 사용하는 가에 대한 설정
+   rolling_window: true                # 국부 지도 창 설정
+   width: 4.0                          # 국부 지도 창의 넓이
+   height: 4.0                         # 국부 지도 창의 높이
+   resolution: 0.05                    # 국부 지도 창의 해상도(미터/셀)
+   transform_tolerance: 0.5            # 변환 허용 시간

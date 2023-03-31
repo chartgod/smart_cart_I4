@@ -37,6 +37,7 @@ void setup() {
   Serial.begin(9600);
   I4_HM10_1.begin(9600);
   I4_HM10_1.println("AT+DISC?"); // AT 명령 모드에서 RSSI 값을 측정하는 명령어 전송
+  Serial.println("Start!");
 }
 
 void loop() {
@@ -59,7 +60,7 @@ void string(){
   while(I4_HM10_1.available()){
     if (I4_HM10_1.available()) { // HM-10 모듈로부터 응답을 받을 때까지 기다림
       char c = I4_HM10_1.read();
-      //Serial.write(c); //시리얼창 모니터링
+      Serial.write(c); //시리얼창 모니터링
       list += c; //모듈에서 읽어오는 문자 list에 추가
     }
     

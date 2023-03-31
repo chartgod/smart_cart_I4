@@ -26,10 +26,10 @@ DWAPlannerROS:
   xy_goal_tolerance: 0.15   # x, y 거리 목표지점 허용오차(meter)
 
 # 전방향 시물레이션 파라미터 Forward Simulation Parameters
-  sim_time: 1.0             # 전방향 시물레이션 궤적 시간       
+  sim_time: 2.0             # 전방향 시물레이션 궤적 시간       1.0
   vx_samples: 6             # x 축 속도 공간에서 탐색하는 샘플 수       
   vy_samples: 1             # y 축 속도 공간에서 탐색하는 샘플 수       
-  vtheta_samples: 20        # theta 축 속도 공간에서 탐색하는 샘플 수  
+  vtheta_samples: 20        # theta 축 속도 공간에서 탐색하는 샘플 수  20
 
 # 궤적 스코어링 파라미터(궤적평가) Trajectory Scoring Parameters
 # 궤적 평가를 위한 비용함수에 사용될 스코어 계산은 아래와 같다.
@@ -37,10 +37,10 @@ DWAPlannerROS:
 # path_distance_bias * (distance to path from the endpoint of the trajectory in meters)
 # + goal_distance_bias * (distance to local goal from the endpoint of the trajectory in meters)
 # + occdist_scale * (maximun obstacle cost along the trajectory in obstacle cost (0-254))
-  path_distance_bias: 64.0   # 컨트롤러가 주어진 경로를 얼마나 따르는가에 대한 가중치      
-  goal_distance_bias: 24.0   # 목표지점과 제어 속도에 근접한지에 대한 가중치      
-  occdist_scale: 0.5         # 장애물 회피에 대한 가중치            
-  forward_point_distance: 0.325 # 로봇 중점과 추가 스코어링 포인트와의 거리(meter) 
+  path_distance_bias: 64.0   # 컨트롤러가 주어진 경로를 얼마나 따르는가에 대한 가중치      #64.0
+  goal_distance_bias: 24.0   # 목표지점과 제어 속도에 근접한지에 대한 가중치      #24.0
+  occdist_scale: 0.5         # 장애물 회피에 대한 가중치  0.5          
+  forward_point_distance: 0.005 # 로봇 중점과 추가 스코어링 포인트와의 거리(meter) 0.325
   stop_time_buffer: 0.2         # 로봇이 충돌 전 정치에 필요한 시간(sec)         
   scaling_speed: 0.25           # 스케일링 속도(meter/sec)           
   max_scaling_factor: 0.2       # 최대 스케일링 요소       
@@ -53,3 +53,5 @@ DWAPlannerROS:
   publish_traj_pc : true      # 이동 궤적 디버깅 설정
   publish_cost_grid_pc: true  # costmap 디버깅 설정
   global_frame_id: odom       # 글로벌 프레임 아이디 설정
+
+  

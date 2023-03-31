@@ -1,7 +1,7 @@
 global_costmap:
-   global_frame: map
-   robot_base_frame: base_footprint
-   update_frequency: 1.0
-   publish_frequency: 0.5
-   static_map: true
-   transform_tolerance: 0.5
+   global_frame: map                 # 지도 프레임 설정
+   robot_base_frame: base_footprint  # 로봇 베이스 프레임 설정
+   update_frequency: 1.0             # 갱신 주기
+   publish_frequency: 0.5            # 퍼블리시 주기
+   static_map: true                  # 주어진 지도를 사용하는 가에 대한 설정
+   transform_tolerance: 0.5          # 변환 허용 시간
