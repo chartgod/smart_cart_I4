@@ -42,16 +42,24 @@ void goal() {
 
     
 
-    std::cout << "Current goal: A\nPress 'A' to stay at A, or 'B' to go to B: ";
+    std::cout << "Current goal: A\nPress 'A' to stay at A, or 'B' to go to B or 'C' to go to C or 'D' to go to D: ";
     std::cin >> input;
 
     if (input == 'A') {
-        x = 2.5;
-        y = 2.5;
+        x = 6.0;
+        y = 0.5;
     }
     else if (input == 'B'){
-        x = -1.0;
-        y = 4.0;
+        x = 6.5;
+        y = 5.5;
+    }
+    else if (input == 'C'){
+        x = 2.0;
+        y = 5.8;
+    }
+    else if (input == 'D'){
+        x = 0.0;
+        y = 0.0;
     }
     
     // Set new goal as A 
@@ -69,11 +77,11 @@ void goal() {
         
     ac.sendGoal(goal);
 
-    std::cout << "Stop : Press 'S' : ";
-    std::cin >> input;
-    if (input == 'S'){
-        ac.cancelGoal();
-    }
+    //std::cout << "Stop : Press 'S' : ";
+    //std::cin >> input;
+    //if (input == 'S'){
+    //    ac.cancelGoal();
+    //}
 
     // Wait for the robot to reach the goal or for the goal to be cancelled
     ac.waitForResult();
@@ -103,7 +111,7 @@ int main (int argc, char **argv)
     ros::init(argc, argv, "A_B_action_client");
     
     thread t1(goal);
-    thread t2(stop);
+    //thread t2(stop);
 
     t1.join();
     // t2.join();
