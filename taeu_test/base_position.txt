@@ -1,0 +1,17 @@
+base_position: 
+  header: 
+    seq: 0
+    stamp: 
+      secs: 22429
+      nsecs: 260000000
+    frame_id: "map"
+  pose: 
+    position: 
+      x: 3.9868292604106337
+      y: 3.9118086480090097
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.0277142936533257
+      w: 0.9996158851915556
