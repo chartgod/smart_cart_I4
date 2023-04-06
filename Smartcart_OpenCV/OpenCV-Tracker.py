@@ -53,9 +53,9 @@ def createTracker(track_type=0):
 cv2.namedWindow('tracking')
 cv2.setMouseCallback('tracking', onMouse)
 
-cap = cv2.VideoCapture('http://192.168.123.4:4747/mjpegfeed') # DroidCam 앱 사용 droid cam
+#cap = cv2.VideoCapture('http://192.168.123.1:4747/mjpegfeed') # DroidCam 앱 사용 droid cam
 #cap = cv2.VideoCapture('./data/ball.wmv')
-##cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 if (not cap.isOpened()): 
      print('Error opening video')    
 height, width = (int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
