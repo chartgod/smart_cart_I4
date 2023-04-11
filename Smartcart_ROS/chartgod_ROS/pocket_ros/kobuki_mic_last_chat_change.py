@@ -40,8 +40,14 @@ def user_response_callback(msg):
 #a,c (x,y)pose check
 # a 또는 a point 출력 시 gTTS 파일로 물어보는 코드 추가
 def process_sphinx_result(sphinx_output, robot_recognized):
+    words = sphinx_output_split()
+    kobuki_twist = []
     global user_response
-    kobuki_twist = Twist()
+    if "robot" in words:
+        robot_recognized = True
+    else:
+        robot_recognized = False
+    return kobuki_twist, robot_recognized or []
 
     if robot_recognized:
         if sphinx_output == "a" or sphinx_output == "a point":
@@ -148,7 +154,7 @@ def process_sphinx_result(sphinx_output, robot_recognized):
             tts = gTTS(text='안녕하세요. 아이포 로봇입니다. 무엇을 도와드릴까요? 원하는 경로까지 안내를 해드리겠습니다.', lang='ko')
             tts.save('hello.mp3')
             os.system('mpg321 hello.mp3')
-            return None, False  # I4를 인식했음을 알립니다.
+            return None, True  # I4를 인식했음을 알립니다.
             rospy.sleep(3) # 3초간 정지 후 회전 동작 수행
             turn_msg = Twist()
             turn_msg.angular.z = 0.5 # 각속도를 0.5로 설정하여 좌회전 동작 수행
@@ -208,9 +214,7 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():
         sphinx_output = get_sphinx_output()
         if sphinx_output is None: continue
-        result = process_sphinx_result(sphinx_output, robot_Recognized)
-        if result is not None:
-            kobuki_twist, robot_recognized = result
+        kobuki_twist, robot_recognized = process_sphinx_result(sphinx_output, robot_recognized)
         if kobuki_twist is not None:
             kobuki_velocity_pub.publish(kobuki_twist)
             print("인식된 명령어:", sphinx_output)
