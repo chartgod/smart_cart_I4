@@ -14,6 +14,15 @@ def on_press(key):
         global KILL
         KILL = True
 
+# ######## test ########
+# def filtering (grayframe):
+#         #흑백 변경
+#         grayframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#         #히스토그램 평활화(재분할)
+#         grayframe = cv2.equalizeHist(grayframe)
+#         return grayframe
+# ######## test ########
+    
 # TrackingAPI
 def tracking():
     
@@ -54,7 +63,6 @@ def tracking():
         ret, frame = cap.read()
         # yolov5 모델에서 검출 결과 가져오기
         results = model(frame)
-
         # 검출된 객체 바운딩이랑 라벨 가져오기 
         boxes = results.xyxy[0].cpu().numpy()
         labels = results.xyxyn[0][:, -1].cpu().numpy()
@@ -70,7 +78,11 @@ def tracking():
             # 가장 큰 면적을 가진 박스 가져오기 
             person_box0 = max(person_boxes, key=lambda x: (x[2] - x[0]) * (x[3] - x[1]))
             # if h1>person_box0[2]:
-            roi = (int(person_box0[0]),int(person_box0[1]),int(person_box0[2]-person_box0[0]),int(person_box0[3]-person_box0[1]))  # 초기 객체 위치 설정
+            # roi = (int(person_box0[0]),int(person_box0[1]),int(person_box0[2]-person_box0[0]),int(person_box0[3]-person_box0[1]))  # 초기 객체 위치 설정
+            # roi = (int(person_box0[0]),int(person_box0[1]+((person_box0[3]-person_box0[1])/4)),
+            #        int(person_box0[2]-person_box0[0]),int((person_box0[3]-person_box0[1])/2))  # 초기 객체 위치 설정 세로 1/2
+            roi = (int(person_box0[0]+((person_box0[2]-person_box0[0])/4)),int(person_box0[1]),
+                   int((person_box0[2]-person_box0[0])/2),int(person_box0[3]-person_box0[1]))  # 초기 객체 위치 설정 가로 1/2
             # print("roi:",roi)
             #person0 = frame[int(person_box0[1]):int(person_box0[3]), int(person_box0[0]):int(person_box0[2])] # 특정영역 이미지 추출
             person0 = frame
@@ -103,11 +115,22 @@ def tracking():
     #         print()
 
     ######## test ########
+
+    ######## test ########
+    def filtering (grayframe):
+            #흑백 변경
+            grayframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            #히스토그램 평활화(재분할)
+            grayframe = cv2.equalizeHist(grayframe)
+            return grayframe
+    ######## test ########
     
+
     while cap.isOpened():
         ret, frame = cap.read()
         #ret, frame0 = cap.read()
         #frame = cv2.imread(frame0, cv2.IMREAD_GRAYSCALE) 
+        frame_filter = filtering(frame)
         if not ret:
             print('Cannot read video file')
             break
@@ -131,7 +154,8 @@ def tracking():
             cv2.putText(img_draw, "Press the Space to set ROI!!", \
                 (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2,cv2.LINE_AA)
         else:
-            ok, bbox = tracker.update(frame)   # 새로운 프레임에서 추적 위치 찾기 ---③
+            # ok, bbox = tracker.update(frame)   # 새로운 프레임에서 추적 위치 찾기 ---③
+            ok, bbox = tracker.update(frame_filter)
             (x2,y2,w2,h2) = bbox # 추적 박스 좌표
             if ok: # 추적 성공
                 cv2.rectangle(img_draw, (int(x2), int(y2)), (int(x2 + w2), int(y2 + h2)), \
@@ -151,8 +175,10 @@ def tracking():
             else : # 추적 실패
                 cv2.putText(img_draw, "Tracking fail.", (100,80), \
                             cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2,cv2.LINE_AA)
-                img0 = cv2.imread('./person0.png') # 추적대상 이미지 불러오기
-                isInit = tracker.init(img0, roi)   # 추적대상에 대한 재 추적
+                # img0 = cv2.imread('./person0.png') # 추적대상 이미지 불러오기
+                # img0 = filtering(img0)
+                # tracker = trackers[trackerIdx]()
+                # isInit = tracker.init(img0, roi)   # 추적대상에 대한 재 추적
                 
         trackerName = tracker.__class__.__name__
         cv2.putText(img_draw, str(trackerIdx) + ":"+trackerName , (100,20), \
@@ -176,7 +202,8 @@ def tracking():
             if roi[2] and roi[3]:         # 위치 설정 값 있는 경우
                 #print(roi[0],roi[1],roi[2],roi[3]) # ROI 박스 값
                 tracker = trackers[trackerIdx]()    #트랙커 객체 생성 ---⑤
-                isInit = tracker.init(frame, roi)
+                # isInit = tracker.init(frame, roi)
+                isInit = tracker.init(frame_filter, roi)
         elif key in range(48, 56): # 0~7 숫자 입력   ---⑥
             trackerIdx = key-48     # 선택한 숫자로 트랙커 인덱스 수정
             if bbox is not None:
