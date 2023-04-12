@@ -4,21 +4,21 @@ import cv2
 #고려 3,
 #선택 6
 # 트랙커 객체 생성자 함수 리스트 ---①
-# trackers = [cv2.TrackerBoosting_create,
-#             cv2.TrackerMIL_create,
-#             cv2.TrackerKCF_create,
-#             cv2.TrackerTLD_create, ##사용
-#             cv2.TrackerMedianFlow_create,
-#             cv2.TrackerGOTURN_create, #버그로 오류 발생
-#             cv2.TrackerCSRT_create, ##사용
-#             cv2.TrackerMOSSE_create]
-trackers = [cv2.TrackerKCF_create, cv2.TrackerCSRT_create]
+trackers = [cv2.TrackerBoosting_create,
+            cv2.TrackerMIL_create,
+            cv2.TrackerKCF_create,
+            cv2.TrackerTLD_create, ##사용
+            cv2.TrackerMedianFlow_create,
+            cv2.TrackerGOTURN_create, #버그로 오류 발생
+            cv2.TrackerCSRT_create, ##사용
+            cv2.TrackerMOSSE_create]
+# trackers = [cv2.TrackerKCF_create, cv2.TrackerCSRT_create]
 trackerIdx = 0  # 트랙커 생성자 함수 선택 인덱스
 tracker = None
 isFirst = True
 
-#video_src = './vtest.avi'
-video_src = 0 # 비디오 파일과 카메라 선택 ---②
+video_src = './vtest.avi'
+# video_src = 0 # 비디오 파일과 카메라 선택 ---②
 cap = cv2.VideoCapture(video_src)
 fps = cap.get(cv2.CAP_PROP_FPS) # 프레임 수 구하기
 delay = int(1000/fps)

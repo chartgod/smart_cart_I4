@@ -16,7 +16,7 @@ def on_press(key):
 
 # TrackingAPI
 def tracking():
-    trackers = [cv2.TrackerTLD_create, cv2.TrackerCSRT_create]
+    trackers = [cv2.TrackerCSRT_create, cv2.TrackerTLD_create]
     trackerIdx = 0  # 트랙커 생성자 함수 선택 인덱스
     tracker = None
     isFirst = True

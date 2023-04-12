@@ -26,8 +26,8 @@ def tracking():
     ######## yolov5 ########
 
     ######## tracking ########
-    trackers = [cv2.TrackerCSRT_create, cv2.TrackerTLD_create]
-    trackerIdx = 0  # 트랙커 생성자 함수 선택 인덱스
+    trackers = [cv2.TrackerCSRT_create, cv2.TrackerTLD_create, cv2.TrackerKCF_create]
+    trackerIdx = 2  # 트랙커 생성자 함수 선택 인덱스
     tracker = None
     isFirst = True
 
@@ -44,6 +44,12 @@ def tracking():
     y2 = 0
     w2 = 0
     h2 = 0
+    
+    # FPS 조절
+    import time
+    prev_time = 0
+    FPS = 10
+
     while (select):
         ret, frame = cap.read()
         # yolov5 모델에서 검출 결과 가져오기
@@ -66,15 +72,58 @@ def tracking():
             # if h1>person_box0[2]:
             roi = (int(person_box0[0]),int(person_box0[1]),int(person_box0[2]-person_box0[0]),int(person_box0[3]-person_box0[1]))  # 초기 객체 위치 설정
             # print("roi:",roi)
+            #person0 = frame[int(person_box0[1]):int(person_box0[3]), int(person_box0[0]):int(person_box0[2])] # 특정영역 이미지 추출
+            person0 = frame
+            cv2.imwrite('person0.png',person0)
             break
-    ######## test ########
 
+    # def histo_compare ():
+    #     img0 = cv2.imread('./person0.png')
+    #     img1 = cv2.imread('./person1.png')
+    #     imgs = [img0, img1]
+    #     hists = []
+    #     for i, img in enumerate(imgs):
+    #         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    #         hist = cv2.calcHist([hsv], [0,1], None, [180,256], [0,180,0,256])
+    #         cv2.normalize(hist, hist, 0, 1, cv2.NORM_MINMAX)
+    #         hists.append(hist)
+        
+    #     query = hists[0]
+    #     methods = {'CORREL' :cv2.HISTCMP_CORREL, 'CHISQR':cv2.HISTCMP_CHISQR, 
+    #                'INTERSECT':cv2.HISTCMP_INTERSECT,
+    #                'BHATTACHARYYA':cv2.HISTCMP_BHATTACHARYYA}
+    #     for j, (name, flag) in enumerate(methods.items()):
+    #         print('%-10s'%name, end='\t')
+    #         for i, (hist, img) in enumerate(zip(hists, imgs)):
+    #             #---④ 각 메서드에 따라 img1과 각 이미지의 히스토그램 비교
+    #             ret = cv2.compareHist(query, hist, flag)
+    #             if flag == cv2.HISTCMP_INTERSECT: #교차 분석인 경우 
+    #                 ret = ret/np.sum(query)        #비교대상으로 나누어 1로 정규화
+    #             print("img%d:%7.2f"% (i+1 , ret), end='\t')
+    #         print()
+
+    ######## test ########
+    
     while cap.isOpened():
         ret, frame = cap.read()
+        #ret, frame0 = cap.read()
+        #frame = cv2.imread(frame0, cv2.IMREAD_GRAYSCALE) 
         if not ret:
             print('Cannot read video file')
             break
-
+        
+        # FPS 조절
+        curTime = time.time() #time.time() 현재 시간 가져오기(초단위)
+        current_time = curTime - prev_time #현재시간에서 이전시간 빼기 prev_time 초기값 0
+        # if (ret is True) and (current_time > 1./FPS) :
+        #     prev_time = time.time()
+        prev_time = curTime #이전 시간을 현재시간으로 다시 저장
+        fps0 = 1/(current_time)
+        str0 = "FPS : %0.1f" % fps0
+        cv2.putText(frame, str0, (0, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0)) #frame에 fps 표시
+        # # cap.set(cv2.CAP_PROP_POS_MSEC,100)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        print("fps",fps)
         
         ######## tracking ########
         img_draw = frame.copy()
@@ -87,12 +136,27 @@ def tracking():
             if ok: # 추적 성공
                 cv2.rectangle(img_draw, (int(x2), int(y2)), (int(x2 + w2), int(y2 + h2)), \
                             (0,255,255), 2, 1)
+                
+                ######## test ########
+                # 사람 박스의 중심과 프레임 중심 간의 오차 계산하기 
+                error_x = (x2 - w2/2) / w2
+                # 오차 정보 이용 -> 코부기 제어하기 # (x2,y2,w2,h2) = bbox -> tracker
+                kobuki_twist = Twist()
+                kobuki_twist.linear.x = 0.5
+                kobuki_twist.angular.z = -error_x * 1.3 # *2 
+                kobuki_velocity_pub.publish(kobuki_twist)
+                print("gogogo")
+                ######## test ########
+
             else : # 추적 실패
                 cv2.putText(img_draw, "Tracking fail.", (100,80), \
                             cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2,cv2.LINE_AA)
+                img0 = cv2.imread('./person0.png') # 추적대상 이미지 불러오기
+                isInit = tracker.init(img0, roi)   # 추적대상에 대한 재 추적
+                
         trackerName = tracker.__class__.__name__
         cv2.putText(img_draw, str(trackerIdx) + ":"+trackerName , (100,20), \
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0,255,0),2,cv2.LINE_AA)
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0,255,255),2,cv2.LINE_AA)
 
         # cv2.imshow(win_name, img_draw)
         key = cv2.waitKey(delay) & 0xff
@@ -122,48 +186,52 @@ def tracking():
             break
         ######## tracking ########
 
-        ######## yolov5 ########
-        # yolov5 모델에서 검출 결과 가져오기
-        results = model(frame)
+        # ######## yolov5 ########
+        # # yolov5 모델에서 검출 결과 가져오기
+        # results = model(frame)
 
-        # 검출된 객체 바운딩이랑 라벨 가져오기 
-        boxes = results.xyxy[0].cpu().numpy()
-        labels = results.xyxyn[0][:, -1].cpu().numpy()
+        # # 검출된 객체 바운딩이랑 라벨 가져오기 
+        # boxes = results.xyxy[0].cpu().numpy()
+        # labels = results.xyxyn[0][:, -1].cpu().numpy()
 
-        # 사람 객체 찾기
-        person_boxes = []
-        for i, label in enumerate(labels):
-            if classes[int(label)] == 'person':
-                person_boxes.append(boxes[i])
+        # # 사람 객체 찾기
+        # person_boxes = []
+        # for i, label in enumerate(labels):
+        #     if classes[int(label)] == 'person':
+        #         person_boxes.append(boxes[i])
+        #         #cv2.rectangle(img_draw, (int(person_boxes[i][0]), int(person_boxes[i][1])), (int(person_boxes[i][2]), int(person_boxes[i][3])), (255, 255, 0), 2) #frame
         
-        # 사람 객체가 검출되면 
-        if person_boxes:
-            # 가장 큰 면적을 가진 박스 가져오기 
-            person_box = max(person_boxes, key=lambda x: (x[2] - x[0]) * (x[3] - x[1]))
-            #print(person_box)
-            
-            # 사람 박스 중심 좌표 가져오기 
-            x1, y1 = (int((person_box[0] + person_box[2]) / 2), int((person_box[1] + person_box[3]) / 2))
+        # # 사람 객체가 검출되면 
+        # if person_boxes:
+        #     # 가장 큰 면적을 가진 박스 가져오기 
+        #     person_box = max(person_boxes, key=lambda x: (x[2] - x[0]) * (x[3] - x[1]))
+        #     #print(person_box)
+        #     person1 = frame[int(person_box[1]):int(person_box[3]), int(person_box[0]):int(person_box[2])] # 특정영역 이미지 추출
+        #     # cv2.imwrite('person1.png',person1)
+        #     #histo_compare()
+        #     # 사람 박스 중심 좌표 가져오기 
+        #     x1, y1 = (int((person_box[0] + person_box[2]) / 2), int((person_box[1] + person_box[3]) / 2))
 
-            # 프레임에 사람 박스, 중심점 그리기 
-            cv2.rectangle(img_draw, (int(person_box[0]), int(person_box[1])), (int(person_box[2]), int(person_box[3])), (0, 255, 0), 2) #frame
-            cv2.circle(img_draw, (x1, y1), 5, (0, 0, 255), -1) #frame
+        #     # 프레임에 사람 박스, 중심점 그리기 
+        #     cv2.rectangle(img_draw, (int(person_box[0]), int(person_box[1])), (int(person_box[2]), int(person_box[3])), (0, 255, 0), 2) #frame
+        #     cv2.circle(img_draw, (x1, y1), 5, (0, 0, 255), -1) #frame
             
-            # 사람 박스의 중심과 프레임 중심 간의 오차 계산하기 
-            error_x = (x1 - w1/2) / w1
+        #     # 사람 박스의 중심과 프레임 중심 간의 오차 계산하기 
+        #     error_x = (x1 - w1/2) / w1
             
-            padding = 50
-            # 오차 정보 이용 -> 코부기 제어하기 # (x2,y2,w2,h2) = bbox 
-            if (person_box[0]-padding) < x2 and (person_box[2]+padding) > (x2+w2) :
-                if (person_box[1]-padding) < y2 and (person_box[3]+padding) > (y2+h2) :
-                    kobuki_twist = Twist()
-                    if (person_box[2]-person_box[0]) < 270.0 :
-                        kobuki_twist.linear.x = 0.5
+        #     padding = 50
+        #     # 오차 정보 이용 -> 코부기 제어하기 # (x2,y2,w2,h2) = bbox -> tracker
+        #     if (person_box[0]-padding) < x2 and (person_box[2]+padding) > (x2+w2) :
+        #         if (person_box[1]-padding) < y2 and (person_box[3]+padding) > (y2+h2) :
+        #             kobuki_twist = Twist()
+        #             if (person_box[2]-person_box[0]) < 270.0 :
+        #                 kobuki_twist.linear.x = 0.5
+        #                 print("gogogo")
             
-                    kobuki_twist.angular.z = -error_x * 1.3 # *2 
-                    kobuki_velocity_pub.publish(kobuki_twist)
-                    print("gogogo")
-        ######## yolov5 ########
+        #             kobuki_twist.angular.z = -error_x * 1.3 # *2 
+        #             kobuki_velocity_pub.publish(kobuki_twist)
+                    
+        # ######## yolov5 ########
 
         cv2.imshow(win_name, img_draw)
         
