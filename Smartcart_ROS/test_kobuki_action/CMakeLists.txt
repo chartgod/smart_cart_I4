@@ -13,7 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Boost REQUIRED COMPONENTS system)
 
-add_action_files(FILES Kobuki1.action)
+add_action_files(FILES KobukiMsg.action)
+add_message_files(FILES KobukiMsg.msg)
 generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
 
 catkin_package(
@@ -35,3 +36,4 @@ target_link_libraries(action_client ${catkin_LIBRARIES})
 add_executable(A_B_action_client src/A_B_action_client.cpp)
 add_dependencies(A_B_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(A_B_action_client ${catkin_LIBRARIES})
+

@@ -130,7 +130,7 @@ def tracking():
         ret, frame = cap.read()
         #ret, frame0 = cap.read()
         #frame = cv2.imread(frame0, cv2.IMREAD_GRAYSCALE) 
-        frame_filter = filtering(frame)
+        # frame_filter = filtering(frame)
         if not ret:
             print('Cannot read video file')
             break
@@ -154,8 +154,8 @@ def tracking():
             cv2.putText(img_draw, "Press the Space to set ROI!!", \
                 (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2,cv2.LINE_AA)
         else:
-            # ok, bbox = tracker.update(frame)   # 새로운 프레임에서 추적 위치 찾기 ---③
-            ok, bbox = tracker.update(frame_filter)
+            ok, bbox = tracker.update(frame)   # 새로운 프레임에서 추적 위치 찾기 ---③
+            # ok, bbox = tracker.update(frame_filter)
             (x2,y2,w2,h2) = bbox # 추적 박스 좌표
             if ok: # 추적 성공
                 cv2.rectangle(img_draw, (int(x2), int(y2)), (int(x2 + w2), int(y2 + h2)), \
@@ -202,8 +202,8 @@ def tracking():
             if roi[2] and roi[3]:         # 위치 설정 값 있는 경우
                 #print(roi[0],roi[1],roi[2],roi[3]) # ROI 박스 값
                 tracker = trackers[trackerIdx]()    #트랙커 객체 생성 ---⑤
-                # isInit = tracker.init(frame, roi)
-                isInit = tracker.init(frame_filter, roi)
+                isInit = tracker.init(frame, roi)
+                # isInit = tracker.init(frame_filter, roi)
         elif key in range(48, 56): # 0~7 숫자 입력   ---⑥
             trackerIdx = key-48     # 선택한 숫자로 트랙커 인덱스 수정
             if bbox is not None:
@@ -261,7 +261,7 @@ def tracking():
         # ######## yolov5 ########
 
         cv2.imshow(win_name, img_draw)
-        
+        # cv2.imshow(win_name+"2", frame_filter)
 
     else:
         print( "Could not open video")
