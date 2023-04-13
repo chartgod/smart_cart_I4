@@ -33,7 +33,11 @@ add_executable(action_client src/action_client.cpp)
 add_dependencies(action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(action_client ${catkin_LIBRARIES})
 
-add_executable(A_B_action_client src/A_B_action_client.cpp)
-add_dependencies(A_B_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(A_B_action_client ${catkin_LIBRARIES})
+add_executable(0413test_action_client src/0413test_action_client.cpp)
+add_dependencies(0413test_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(0413test_action_client ${catkin_LIBRARIES})
+
+# add_executable(A_B_action_client src/A_B_action_client.cpp)
+# add_dependencies(A_B_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# target_link_libraries(A_B_action_client ${catkin_LIBRARIES})
 
