@@ -36,7 +36,7 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {
     // pose_->pose.pose.orientation.z
     // pose_->pose.pose.orientation.w
     
-    /////////////////////////////////////////////////////////////
+    //
     // string line;
     // char pose_txt[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/test_kobuki_action/src/pose.txt";
     // int i=0;
@@ -73,11 +73,11 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {
     cout << "position[2]=z:"<< position[2] <<endl;
     cout << "position[3]=w:"<< position[3] <<endl;
 
-    // char img_file[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.pgm";
-    // char img_file_save[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.jpg";
-    // cv::Mat img = cv::imread(img_file, 1);
-    // cv::circle(img, cv::Point(position[0],position[1]),4,cv::Scalar(0,0,255),1,-1,0);
-    // cv::imwrite(img_file_save, img);
+    char img_file[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.pgm";
+    char img_file_save[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.jpg";
+    cv::Mat img = cv::imread(img_file, 1);
+    cv::circle(img, cv::Point(position[0],position[1]),4,cv::Scalar(0,0,255),1,-1,0);
+    cv::imwrite(img_file_save, img);
 
 
     // int main (int argc, char** argv){
@@ -106,10 +106,8 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {
 
     // def map_img(x, y):
     // img = mpimg.imread('/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.pgm')
-    // # x 180-350 170 /8 y 220-50 170 /8  170/8 => 1m=21.25픽셀
+    // # x 180-350 170 /8 y 220-50 170 /8  170/8 => 1m=21.25pixel
     
-    // #ros x,y좌표
-    // #원 포인트(x1,y1)
     // x1 = 180+(x * 170 / 8)
     // y1 = 220-(y * 170 / 8)
     // red = (0,0,255)

@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   move_base_msgs
   roscpp
   std_msgs
+  cv_bridge
 )
 
 find_package(Boost REQUIRED COMPONENTS system)

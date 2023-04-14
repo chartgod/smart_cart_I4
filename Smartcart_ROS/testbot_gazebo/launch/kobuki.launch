@@ -31,7 +31,7 @@
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="mobile_base" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-	args="-urdf -model mobile_base -x 3.061060 -y 3.007341 -param robot_description"/> 
+	args="-urdf -model mobile_base -x 3.0 -y 3.0 -param robot_description"/> 
 
   <!-- <node pkg="nodelet" type="nodelet" name="$(arg robot_name)_nodelet_manager" args="manager"/> -->
   
