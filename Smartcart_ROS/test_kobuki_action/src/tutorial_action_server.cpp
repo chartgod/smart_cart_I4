@@ -23,44 +23,6 @@ float data_x, data_y;
 
 // void poseCallback(const geometry_msgs::PolygonStamped::ConstPtr& pose_) {
 void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {
-    // ROS_INFO("recieve msg = %s", pose_->pose.pose.position.x);
-    // ROS_INFO("recieve msg = %f", pose_->pose.pose.position.x);
-    // printf(msg->polygon.points);
-    // ofstream fout;
-    // fout.open("/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/test_kobuki_action/src/pose.txt");
-    // fout << pose_->polygon.points[0] << endl;
-    // fout.close();
-
-    // pose_->pose.pose.position.x
-    // pose_->pose.pose.position.y
-    // pose_->pose.pose.orientation.z
-    // pose_->pose.pose.orientation.w
-    
-    //
-    // string line;
-    // char pose_txt[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/test_kobuki_action/src/pose.txt";
-    // int i=0;
-    // ofstream fout;
-    // fout.open(pose_txt);
-    // fout <<pose_->pose.pose.position.x << endl;
-    // fout <<pose_->pose.pose.position.y << endl;
-    // fout <<pose_->pose.pose.orientation.z << endl;
-    // fout <<pose_->pose.pose.orientation.w << endl;
-    // // fout << "x:"<<pose_->pose.pose.position.x << endl;
-    // // fout << "y:"<<pose_->pose.pose.position.y << endl;
-    // // fout << "z:"<<pose_->pose.pose.orientation.z << endl;
-    // // fout << "w:"<<pose_->pose.pose.orientation.w << endl;
-    // // fout << "x:"<<pose_->pose.pose.position.x << "y:"<<pose_->pose.pose.position.y << "z:"<<pose_->pose.pose.orientation.z << "w:"<<pose_->pose.pose.orientation.w << endl;
-    // fout.close();
-    // ifstream fin;
-    // fin.open(pose_txt);
-    // while (!fin.eof()){
-    //     getline(fin, line);
-    //     // pose[i]=(float)line;
-    //     ++i;
-    //     // cout << line << endl;
-    // }
-    // fin.close();
     float position[4];
 
     position[0] = pose_->pose.pose.position.x;
@@ -80,47 +42,7 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {
     int position_y = 220-((int)position[0] * 170 / 8);
     cv::Mat img = cv::imread(img_file, 1);
     cv::circle(img, cv::Point(position_x,position_y),4,cv::Scalar(0,0,255),1,-1,0);
-    cv::imwrite(img_file_save, img);
-
-
-    // int main (int argc, char** argv){
-    // 	ros::init(argc, argv, "cv_bridge_test");
-	
-	//     cv::VideoCapture cap(0);	
-	//     cv::Mat frame;
-	
-	//     if(cap.isOpened()){
-    // 		while(1){
-	// 		    cap >> frame;
-    
-	// 		    cv::imshow("streaming video", frame);
-	// 		    if(cv::waitKey(1) == 27) break;	
-	// 	    }
-    // 	}
-	
-	//     else{
-	// 	    std::cout << "NO FRAME, CHECK YOUR CAMERA!" << std::endl;
-	//     }	
-	
-	//     cv::destroyAllWindows();
-	
-	//     return 0;
-    // }
-
-    // def map_img(x, y):
-    // img = mpimg.imread('/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.pgm')
-    // # x 180-350 170 /8 y 220-50 170 /8  170/8 => 1m=21.25pixel
-    
-    // x1 = 180+(x * 170 / 8)
-    // y1 = 220-(y * 170 / 8)
-    // red = (0,0,255)
-    // blue = (0,255,0)
-    // image_circle_1 = cv2.circle(img, (int(x1),int(y1)), 3, red, -1)
-    // cv2.imwrite('map_img.png',img)
-    // #print('This image is:', type(image_circle_1), 'with dimensions:', image_circle_1.shape)
-    // #plt.imshow(image_circle_1)
-    // #plt.show()
-    
+    cv::imwrite(img_file_save, img);    
 }
 
 void stop() {
@@ -231,24 +153,71 @@ void goal() {
 //     }
 // }
 
-// void actionMsg(){
-//     ros::NodeHandle nh_;
-//     actionlib::SimpleActionServer<test_kobuki_action::KobukiMsgAction> as_;
-//     std::string action_name_;
-//     test_kobuki_action::KobukiMsgFeedback feedback_;
-//     test_kobuki_action::KobukiMsgResult result_;
-//     Movebase
-// }
+class KobukiMsgAction{
+    protected:
+        ros::NodeHandle nh_;
+        actionlib::SimpleActionServer<test_kobuki_action::KobukiMsgAction> as_;
+        std::string action_name_;
+        test_kobuki_action::KobukiMsgFeedback feedback_;
+        test_kobuki_action::KobukiMsgResult result_;
+    public:
+        // Initialize action server (Node handle, action name, action callback function)
+        KobukiMsgAction(std::string name) :
+            as_(nh_, name, boost::bind(&KobukiMsgAction::executeCB, this, _1), false),
+            action_name_(name)
+        {
+            as_.start();
+        }
+
+        ~KobukiMsgAction(void){}
+
+        void executeCB(const test_kobuki_action::KobukiMsgGoalConstPtr &goal){
+            ros::Rate r(1);
+            bool success = true;
+            feedback_.sequence.clear();
+            feedback_.sequence.push_back(0);
+            feedback_.sequence.push_back(1);
+            
+            ROS_INFO("%s,%i,%i,%i", action_name_.c_str(), goal->order, feedback_.sequence[0], feedback_.sequence[1]);
+
+            // Action contents 피보나치 수열 계산
+            // for(int i=1; i<=goal->order; i++){
+            //     // Confirm action cancellation from action client
+            //     if(as_.isPreemptRequested() || !ros::ok()){
+            //         // Notify action cancelation
+            //         ROS_INFO("%s: Preempted",action_name_.c_str());
+            //         // Action cancellation and consider action as failure and save to variable
+            //         as_.setPreempted();
+            //         success = false;
+            //         break;
+            //     }
+            //     feedback_.sequence.push_back(feedback_.sequence[i] + feedback_.sequence[i-1]);
+            //     // ROS_INFO("%s,%i,%i", action_name_.c_str(), goal->order, feedback_.sequence[i+1]);
+            //     as_.publishFeedback(feedback_);
+            //     r.sleep();
+            // }
+
+            if(success){
+                result_.sequence = feedback_.sequence;
+                ROS_INFO("%s: Succeeded", action_name_.c_str());
+                as_.setSucceeded(result_);
+            }
+        }
+
+};
 
 int main (int argc, char **argv)
 {
-    ros::init(argc, argv, "A_B_action_client");
+    ros::init(argc, argv, "action_server");
+    KobukiMsgAction kobukimsg("test_kobuki_action");
+
+    // ros::init(argc, argv, "A_B_action_client");
     // test
     // ros::init(argc, argv, "topic_subscriber");
-    ros::NodeHandle nh;
+    // ros::NodeHandle nh;
     // ros::Subscriber test_kobuki_sub = nh.subscribe("kobuki_msg", 100, msgCallback);
     // ros::Subscriber test_kobuki_sub = nh.subscribe("/move_base/global_costmap/footprint", 100, poseCallback);
-    ros::Subscriber test_kobuki_sub = nh.subscribe("/odom", 100, poseCallback);
+    // ros::Subscriber test_kobuki_sub = nh.subscribe("/odom", 100, poseCallback);
     ros::spin();
     return 0;
 
