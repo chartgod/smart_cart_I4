@@ -75,8 +75,11 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {
 
     char img_file[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.pgm";
     char img_file_save[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.jpg";
+    // 수치 조정 필요
+    int position_x = 180+((int)position[0] * 170 / 8);
+    int position_y = 220-((int)position[0] * 170 / 8);
     cv::Mat img = cv::imread(img_file, 1);
-    cv::circle(img, cv::Point(position[0],position[1]),4,cv::Scalar(0,0,255),1,-1,0);
+    cv::circle(img, cv::Point(position_x,position_y),4,cv::Scalar(0,0,255),1,-1,0);
     cv::imwrite(img_file_save, img);
 
 
