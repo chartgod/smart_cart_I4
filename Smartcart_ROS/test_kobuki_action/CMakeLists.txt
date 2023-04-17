@@ -42,9 +42,13 @@ include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 # add_dependencies(A_B_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 # target_link_libraries(A_B_action_client ${catkin_LIBRARIES})
 
-add_executable(0414test_action_client src/0414test_action_client.cpp)
-add_dependencies(0414test_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(0414test_action_client ${catkin_LIBRARIES})
+add_executable(0417_stop_test_action_client src/0417_stop_test_action_client.cpp)
+add_dependencies(0417_stop_test_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(0417_stop_test_action_client ${catkin_LIBRARIES})
+
+add_executable(0414_go_to_target_point_test_action_client src/0414_go_to_target_point_test_action_client.cpp)
+add_dependencies(0414_go_to_target_point_test_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(0414_go_to_target_point_test_action_client ${catkin_LIBRARIES})
 
 add_executable(0414test_action_server src/0414test_action_server.cpp)
 add_dependencies(0414test_action_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

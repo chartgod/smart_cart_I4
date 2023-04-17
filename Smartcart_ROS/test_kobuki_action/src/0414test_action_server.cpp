@@ -122,11 +122,12 @@ class KobukiMsgAction{
             int go_to_target_point_ = 1;
             int map_img_ = 2;
             int tracking_ = 3;
-
+            
             if(goal->order == stop_){
-                //
+                stop();
             }
             else if(goal->order == go_to_target_point_){
+                stop();
                 go_to_target_point(goal->position_x, goal->position_y);
                 // actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> mbac("move_base", true);
                 // mbac.waitForServer();
