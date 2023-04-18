@@ -12,19 +12,24 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
 )
 
-find_package(Boost REQUIRED COMPONENTS system)
+# find_package( OpenCV REQUIRED )
+find_package( OpenCV REQUIRED )#Boost REQUIRED COMPONENTS system)
 
 add_action_files(FILES KobukiMsg.action)
 add_message_files(FILES KobukiMsg.msg)
 generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
 
 catkin_package(
+ LIBRARIES opencv
  LIBRARIES test_kobuki_action
  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs message_generation move_base_msgs roscpp std_msgs
  DEPENDS Boost
 )
 
-include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+include_directories( 
+  ${OpenCV_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS})
 
 # add_executable(action_server src/action_server.cpp)
 # add_dependencies(action_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -41,6 +46,10 @@ include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 # add_executable(A_B_action_client src/A_B_action_client.cpp)
 # add_dependencies(A_B_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 # target_link_libraries(A_B_action_client ${catkin_LIBRARIES})
+
+add_executable(0418_map_test_action_client src/0418_map_test_action_client.cpp)
+add_dependencies(0418_map_test_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(0418_map_test_action_client ${catkin_LIBRARIES})
 
 add_executable(0417_stop_test_action_client src/0417_stop_test_action_client.cpp)
 add_dependencies(0417_stop_test_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

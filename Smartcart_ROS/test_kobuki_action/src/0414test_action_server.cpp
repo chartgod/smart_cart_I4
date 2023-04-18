@@ -17,32 +17,40 @@ using namespace std;
 
 #include "test_kobuki_action/KobukiMsgAction.h" //
 
+#include <visp/vpPose.h>
+// #include <opencv2/tracking.hpp>
+
+
 // #include "thread"
 // using std::thread;
 // float data_x, data_y;
+int msg_num = 0;
 
-// void poseCallback(const geometry_msgs::PolygonStamped::ConstPtr& pose_) {
-void map_img(const nav_msgs::Odometry::ConstPtr& pose_) {
-    float position[4];
+float position[4];
 
-    position[0] = pose_->pose.pose.position.x;
-    position[1] = pose_->pose.pose.position.y;
-    position[2] = pose_->pose.pose.orientation.z;
-    position[3] = pose_->pose.pose.orientation.w;
-    
-    cout << "position[0]=x:"<< position[0] <<endl;
-    cout << "position[1]=y:"<< position[1] <<endl;
-    cout << "position[2]=z:"<< position[2] <<endl;
-    cout << "position[3]=w:"<< position[3] <<endl;
-
+void map_img() {
     char img_file[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.pgm";
-    char img_file_save[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/rosbook_kobuki/kobuki_navigation/maps/map_1/map.jpg";
+    char img_file_save[] = "/home/user1/catkin_ws/src/smart_cart_I4/Smartcart_ROS/test_kobuki_action/map_img/map.jpg";
     // 수치 조정 필요
     int position_x = 180+((int)position[0] * 170 / 8);
     int position_y = 220-((int)position[0] * 170 / 8);
     cv::Mat img = cv::imread(img_file, 1);
     cv::circle(img, cv::Point(position_x,position_y),4,cv::Scalar(0,0,255),1,-1,0);
     cv::imwrite(img_file_save, img);    
+}
+// void poseCallback(const geometry_msgs::PolygonStamped::ConstPtr& pose_) {
+void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {
+
+
+    position[0] = pose_->pose.pose.position.x;
+    position[1] = pose_->pose.pose.position.y;
+    position[2] = pose_->pose.pose.orientation.z;
+    position[3] = pose_->pose.pose.orientation.w;
+    
+    // cout << "position[0]=x:"<< position[0] <<endl;
+    // cout << "position[1]=y:"<< position[1] <<endl;
+    // cout << "position[2]=z:"<< position[2] <<endl;
+    // cout << "position[3]=w:"<< position[3] <<endl;
 }
 
 void stop() {
@@ -94,6 +102,7 @@ void go_to_target_point(float data_x, float data_y) {
 }
 
 void tracking() {
+    // cv::Ptr<cv::Tracker> trac = cv::TrackerCSRT::create();
 
 }
 
@@ -124,34 +133,27 @@ class KobukiMsgAction{
             int tracking_ = 3;
             
             if(goal->order == stop_){
-                stop();
+                ROS_INFO("stop_");
+                
+                // #include "actionlib_msgs/GoalID.h"
+                // actionlib::SimpleActionClient<test_kobuki_action::cancelGoal> ac("test_kobuki_action",true);
             }
             else if(goal->order == go_to_target_point_){
-                stop();
+                ROS_INFO("go_to_target_point_");
                 go_to_target_point(goal->position_x, goal->position_y);
-                // actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> mbac("move_base", true);
-                // mbac.waitForServer();
-                // move_base_msgs::MoveBaseGoal mbgoal;
-                // mbgoal.target_pose.header.seq = 0;
-                // mbgoal.target_pose.header.stamp.sec = 0;
-                // mbgoal.target_pose.header.stamp.nsec = 0;
-                // mbgoal.target_pose.header.frame_id = "map";
-                // mbgoal.target_pose.pose.position.x = goal->position_x;
-                // mbgoal.target_pose.pose.position.y = goal->position_y;
-                // mbgoal.target_pose.pose.position.z = 0.0;
-                // mbgoal.target_pose.pose.orientation.x = 0.0;
-                // mbgoal.target_pose.pose.orientation.y = 0.0;
-                // mbgoal.target_pose.pose.orientation.z = goal->orientation_z;
-                // mbgoal.target_pose.pose.orientation.w = goal->orientation_w;
-                // mbac.sendGoal(mbgoal);
-                as_.publishFeedback(feedback_);
-                r.sleep();
+                // as_.publishFeedback(feedback_);
+                // r.sleep();
             }
             else if(goal->order == map_img_){
-                ros::NodeHandle nh;
-                ros::Subscriber test_kobuki_sub = nh.subscribe("/odom", 100, map_img);
+                ROS_INFO("map_img_");
+                // msg_num = 2;
+                // cout << msg_num << endl;
+                // ros::NodeHandle nh;
+                // ros::Subscriber test_kobuki_sub = nh.subscribe("/odom", 100, poseCallback);
+                map_img();                
             }
             else if(goal->order == tracking_){
+                ROS_INFO("tracking_");
                 //
             }
 
@@ -168,14 +170,19 @@ int main (int argc, char **argv)
 {
     ros::init(argc, argv, "action_server");
     KobukiMsgAction kobukimsg("test_kobuki_action");
-
+    cout << msg_num << endl;
     // ros::init(argc, argv, "A_B_action_client");
     // test
     // ros::init(argc, argv, "topic_subscriber");
-    // ros::NodeHandle nh;
+    ros::NodeHandle nh;
     // ros::Subscriber test_kobuki_sub = nh.subscribe("kobuki_msg", 100, msgCallback);
     // ros::Subscriber test_kobuki_sub = nh.subscribe("/move_base/global_costmap/footprint", 100, poseCallback);
-    // ros::Subscriber test_kobuki_sub = nh.subscribe("/odom", 100, poseCallback);
+    ros::Subscriber test_kobuki_sub = nh.subscribe("/odom", 100, poseCallback);
+    // if (msg_num == 2) {
+    //     ROS_INFO("map_img_2");
+    //     ros::NodeHandle nh;
+    //     ros::Subscriber test_kobuki_sub = nh.subscribe("/odom", 100, map_img);
+    // }
     ros::spin();
     return 0;
 
