@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 # find_package( OpenCV REQUIRED )
-find_package( OpenCV REQUIRED )#Boost REQUIRED COMPONENTS system)
+find_package( OpenCV 4.2.0 REQUIRED )#Boost REQUIRED COMPONENTS system)
 
 add_action_files(FILES KobukiMsg.action)
 add_message_files(FILES KobukiMsg.msg)
