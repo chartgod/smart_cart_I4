@@ -22,13 +22,13 @@ void imageCallback(const std_msgs::UInt8MultiArray::ConstPtr& array)
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "opencv_sub");
+  ros::init(argc, argv, "pose_map_img_sub");
 
   cv::namedWindow("view");
   cv::startWindowThread();
 
   ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("camera/image", 5, imageCallback);
+  ros::Subscriber sub = nh.subscribe("map_img/image", 5, imageCallback);
 
   ros::spin();
   cv::destroyWindow("view");

@@ -39,12 +39,13 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "opencv_pub");
+    ros::init(argc, argv, "pose_map_img_pub");
     
     ros::NodeHandle nh1;
     ros::Subscriber test_kobuki_sub = nh1.subscribe("/odom", 100, poseCallback);
     ros::NodeHandle nh2;
-    ros::Publisher pub = nh2.advertise<std_msgs::UInt8MultiArray>("camera/image", 1);
+    // ros::Publisher pub = nh2.advertise<std_msgs::UInt8MultiArray>("camera/image", 1);
+    ros::Publisher pub = nh2.advertise<std_msgs::UInt8MultiArray>("map_img/image", 1);
 
     // cv::VideoCapture cap(0);
     // cv::Mat frame;
