@@ -13,6 +13,7 @@
 #include <iostream>
 #include "geometry_msgs/PolygonStamped.h"
 #include "nav_msgs/Odometry.h"
+#include <image_transport/image_transport.h>
 using namespace std;
 
 #include "test_kobuki_action/KobukiMsgAction.h" //
@@ -36,7 +37,7 @@ void map_img() {
     int position_y = 220-((int)position[0] * 170 / 8);
     cv::Mat img = cv::imread(img_file, 1);
     cv::circle(img, cv::Point(position_x,position_y),4,cv::Scalar(0,0,255),1,-1,0);
-    cv::imwrite(img_file_save, img);    
+    cv::imwrite(img_file_save, img);
 }
 // void poseCallback(const geometry_msgs::PolygonStamped::ConstPtr& pose_) {
 void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_) {

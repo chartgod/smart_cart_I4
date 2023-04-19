@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   cv_bridge
+  image_transport
 )
 
 # find_package( OpenCV REQUIRED )
@@ -22,7 +23,7 @@ generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
 catkin_package(
  LIBRARIES opencv
  LIBRARIES test_kobuki_action
- CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs message_generation move_base_msgs roscpp std_msgs
+ CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs message_generation move_base_msgs roscpp std_msgs image_transport
  DEPENDS Boost
 )
 
