@@ -64,7 +64,8 @@ int main(int argc, char** argv)
             std::vector<uchar> encode;
             std::vector<int> encode_param;
             
-            encode_param.push_back(CV_IMWRITE_JPEG_QUALITY);
+            // encode_param.push_back(CV_IMWRITE_JPEG_QUALITY); // catkin_make error :opencv 3.2.0버전에 사용하던 방식
+            encode_param.push_back(cv::IMWRITE_JPEG_QUALITY); // opencv 4.2.0
             encode_param.push_back(20);
             
             cv::imencode(".jpg", frame, encode, encode_param);
