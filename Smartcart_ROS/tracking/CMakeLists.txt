@@ -5,28 +5,30 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   geometry_msgs
-  # message_generation
+  message_generation
   move_base_msgs
   roscpp
   std_msgs
   cv_bridge
   image_transport
+  darknet_ros_msgs
 )
 
 # find_package( OpenCV REQUIRED )
 find_package( OpenCV 4.2.0 REQUIRED )
+# find_package( darknet_ros REQUIRED )
 find_package(Boost REQUIRED COMPONENTS system)
 
 # add_action_files(FILES KobukiMsg.action)
 # add_message_files(FILES KobukiMsg.msg)
-generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
+# add_message_files(FILES BoundingBoxes.msg)
+generate_messages(DEPENDENCIES actionlib_msgs std_msgs)# darknet_ros_msgs)
 
 catkin_package(
  LIBRARIES opencv
  LIBRARIES tracking
- CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs 
- message_generation
- move_base_msgs roscpp std_msgs image_transport
+ CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs message_generation move_base_msgs roscpp std_msgs image_transport
+ darknet_ros_msgs
  DEPENDS Boost
 )
 

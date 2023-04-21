@@ -18,6 +18,7 @@
 #include <cstring>
 using namespace std;
 using namespace cv;
+
 int main( int argc, char** argv ){
   // show help
 //   if(argc<2){
