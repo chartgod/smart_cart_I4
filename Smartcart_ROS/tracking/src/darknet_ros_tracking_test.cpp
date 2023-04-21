@@ -25,7 +25,7 @@ using namespace cv;
 #include "darknet_ros_msgs/BoundingBoxes.h"
 
 void personCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& person_) {
-    
+    cout << person_->bounding_boxes[0].probability << endl;
     cout << person_->bounding_boxes[0].xmin << endl;
     cout << person_->bounding_boxes[0].ymin << endl;
 }
