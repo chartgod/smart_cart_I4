@@ -14,6 +14,10 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
+
+#include <sensor_msgs/Image.h>
+#include <cv_bridge/cv_bridge.h>
+
 #include <iostream>
 #include <cstring>
 
@@ -28,14 +32,78 @@ void personCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& person_) {
     cout << person_->bounding_boxes[0].probability << endl;
     cout << person_->bounding_boxes[0].xmin << endl;
     cout << person_->bounding_boxes[0].ymin << endl;
+    cout << person_->bounding_boxes[0].xmax << endl;
+    cout << person_->bounding_boxes[0].ymax << endl;
+}
+
+darknet_ros_msgs::BoundingBoxes bbox_msg;
+bbox_msg = ros::topic::waitForMessage<darknet_ros_msgs::BoundingBoxes>("/darknet_ros/bounding_boxes", ros::Duration(1));
+if (bbox_msg.bounding_boxes.empty()) {
+      ROS_INFO("No person detected.");
+      return;
+}
+for (int i = 0; i < bbox_msg.bounding_boxes.size(); i++) {
+    if (bbox_msg.bounding_boxes[i].Class == "person" && bbox_msg.bounding_boxes[i].probability > 0.8) {
+        Rect2d detection_bbox;
+        Rect ////////////////////////
+        detection_bbox.x = bbox_msg.bounding_boxes[i].xmin;
+        detection_bbox.y = bbox_msg.bounding_boxes[i].ymin;
+        detection_bbox.width = bbox_msg.bounding_boxes[i].xmax - bbox_msg.bounding_boxes[i].xmin;
+        detection_bbox.height = bbox_msg.bounding_boxes[i].ymax - bbox_msg.bounding_boxes[i].ymin;
+
+         // 추적 성공 시 bounding box를 초록색으로 표시
+        if (tracker->update(frame, bbox)) {
+            rectangle(frame, bbox, Scalar(0, 255, 0), 2, 1);
+        }
+        // 추적 실패 시 검출 결과 bounding box를 빨간색으로 표시
+        else {
+            rectangle(frame, detection_bbox, Scalar(0, 0, 255), 2, 1);
+            ROS_INFO("The tracking has failed...");
+            tracker->init(frame, detection_bbox);
+            bbox = detection_bbox;
+        }
+        break;
+    }
 }
 
 
 int main( int argc, char** argv ){
   ros::init(argc, argv, "tracking");
+
   ros::NodeHandle nh;
+  ros::Publisher image_pub = nh.advertise<sensor_msgs::Image>("/usb_cam/image_raw", 1);
   ros::Subscriber tracking_sub = nh.subscribe("/darknet_ros/bounding_boxes", 100, personCallback);
-  ros::spin();
+  cv::VideoCapture cap(0);
+  if (!cap.isOpened()) {
+    ROS_ERROR("Cannot open camera");
+    return -1;
+  }
+
+  while (nh.ok()) {
+    cv::Mat frame;
+    cap >> frame;
+    if (frame.empty()) {
+      ROS_ERROR("No captured frame");
+      break;
+    }
+
+    cv_bridge::CvImage cv_image;
+    cv_image.header.stamp = ros::Time::now();
+    cv_image.header.frame_id = "usb_cam";
+    cv_image.encoding = "bgr8";
+    cv_image.image = frame;
+    sensor_msgs::Image image_msg;
+    cv_image.toImageMsg(image_msg);
+    image_pub.publish(image_msg);
+
+    
+
+    ros::spinOnce();
+  }
+
+  // ros::NodeHandle nh;
+  // ros::Subscriber tracking_sub = nh.subscribe("/darknet_ros/bounding_boxes", 100, personCallback);
+  // ros::spin();
 
 
   // show help

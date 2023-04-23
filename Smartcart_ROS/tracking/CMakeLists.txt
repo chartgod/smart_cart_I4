@@ -47,6 +47,16 @@ add_dependencies(darknet_ros_tracking_test ${${PROJECT_NAME}_EXPORTED_TARGETS} $
 target_link_libraries(darknet_ros_tracking_test ${catkin_LIBRARIES})
 target_link_libraries(darknet_ros_tracking_test ${OpenCV_LIBRARIES})
 
+add_executable(cam_test src/cam_test.cpp)
+add_dependencies(cam_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(cam_test ${catkin_LIBRARIES})
+target_link_libraries(cam_test ${OpenCV_LIBRARIES})
+
+add_executable(cam_test2 src/cam_test2.cpp)
+add_dependencies(cam_test2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(cam_test2 ${catkin_LIBRARIES})
+target_link_libraries(cam_test2 ${OpenCV_LIBRARIES})
+
 # add_executable(0414test_action_server src/0414test_action_server.cpp)
 # add_dependencies(0414test_action_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 # target_link_libraries(0414test_action_server ${catkin_LIBRARIES})
