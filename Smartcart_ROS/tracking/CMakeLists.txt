@@ -21,7 +21,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 # add_action_files(FILES KobukiMsg.action)
 # add_message_files(FILES KobukiMsg.msg)
-# add_message_files(FILES BoundingBoxes.msg)
+add_message_files(FILES TrackingMsg.msg)
 generate_messages(DEPENDENCIES actionlib_msgs std_msgs)# darknet_ros_msgs)
 
 catkin_package(

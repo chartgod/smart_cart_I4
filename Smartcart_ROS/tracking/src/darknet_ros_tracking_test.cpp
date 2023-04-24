@@ -28,8 +28,9 @@ using namespace std;
 using namespace cv;
 // #include "nav_msgs/Odometry.h"
 #include "darknet_ros_msgs/BoundingBoxes.h"
+#include "tracking/TrackingMsg.h"
 
-int z = 0;
+int z = 10;
 Rect2d bbox;// Rect( Point( x1, y1 ), Point( x2, y2) );
 bool initTracking = false;
 void personCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& person_) {
@@ -50,6 +51,15 @@ void personCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& person_) {
     }
 }
 
+void appCallback(const tracking::TrackingMsg::ConstPtr& app_msg) {
+  if (app_msg -> data == 0){
+    z = app_msg -> data;
+  }
+  if(app_msg -> data == 10){
+    z = app_msg -> data;
+    initTracking = false;
+  }
+}
 
 
 int main( int argc, char** argv ){
@@ -60,7 +70,8 @@ int main( int argc, char** argv ){
   ros::Publisher image_pub = nh.advertise<sensor_msgs::Image>("/usb_cam/image_raw", 1);
   ros::Publisher tracking_pub = nh.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
   ros::Subscriber person_sub = nh.subscribe("/darknet_ros/bounding_boxes", 100, personCallback);
-  
+  ros::Subscriber tracking_msg_sub = nh.subscribe("/tracking/TrackingMsg", 100, appCallback);
+
   Ptr<Tracker> tracker = TrackerKCF::create();
   cv::VideoCapture cap(0);
   int frame_width = 640 ;
