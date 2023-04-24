@@ -3,6 +3,7 @@
 #include "actionlib/server/simple_action_server.h" //
 #include "actionlib/client/terminal_state.h" //
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
+#include "geometry_msgs/Twist.h"
 #include "move_base_msgs/MoveBaseActionGoal.h"
 #include "move_base_msgs/MoveBaseAction.h"
 #include "move_base_msgs/MoveBaseGoal.h"
@@ -28,57 +29,51 @@ using namespace cv;
 // #include "nav_msgs/Odometry.h"
 #include "darknet_ros_msgs/BoundingBoxes.h"
 
+int z = 0;
+Rect2d bbox;// Rect( Point( x1, y1 ), Point( x2, y2) );
+bool initTracking = false;
 void personCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& person_) {
-    cout << person_->bounding_boxes[0].probability << endl;
-    cout << person_->bounding_boxes[0].xmin << endl;
-    cout << person_->bounding_boxes[0].ymin << endl;
-    cout << person_->bounding_boxes[0].xmax << endl;
-    cout << person_->bounding_boxes[0].ymax << endl;
-}
-
-darknet_ros_msgs::BoundingBoxes bbox_msg;
-bbox_msg = ros::topic::waitForMessage<darknet_ros_msgs::BoundingBoxes>("/darknet_ros/bounding_boxes", ros::Duration(1));
-if (bbox_msg.bounding_boxes.empty()) {
-      ROS_INFO("No person detected.");
-      return;
-}
-for (int i = 0; i < bbox_msg.bounding_boxes.size(); i++) {
-    if (bbox_msg.bounding_boxes[i].Class == "person" && bbox_msg.bounding_boxes[i].probability > 0.8) {
-        Rect2d detection_bbox;
-        Rect ////////////////////////
-        detection_bbox.x = bbox_msg.bounding_boxes[i].xmin;
-        detection_bbox.y = bbox_msg.bounding_boxes[i].ymin;
-        detection_bbox.width = bbox_msg.bounding_boxes[i].xmax - bbox_msg.bounding_boxes[i].xmin;
-        detection_bbox.height = bbox_msg.bounding_boxes[i].ymax - bbox_msg.bounding_boxes[i].ymin;
-
-         // 추적 성공 시 bounding box를 초록색으로 표시
-        if (tracker->update(frame, bbox)) {
-            rectangle(frame, bbox, Scalar(0, 255, 0), 2, 1);
-        }
-        // 추적 실패 시 검출 결과 bounding box를 빨간색으로 표시
-        else {
-            rectangle(frame, detection_bbox, Scalar(0, 0, 255), 2, 1);
-            ROS_INFO("The tracking has failed...");
-            tracker->init(frame, detection_bbox);
-            bbox = detection_bbox;
-        }
-        break;
+    if (person_->bounding_boxes[0].probability > 0.8 && z == 0){
+      int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+      
+      cout << person_->bounding_boxes[0].probability << endl;
+      cout << person_->bounding_boxes[0].xmin << endl;
+      cout << person_->bounding_boxes[0].ymin << endl;
+      cout << person_->bounding_boxes[0].xmax << endl;
+      cout << person_->bounding_boxes[0].ymax << endl;
+      x1 = person_->bounding_boxes[0].xmin;
+      y1 = person_->bounding_boxes[0].ymin;
+      x2 = person_->bounding_boxes[0].xmax;
+      y2 = person_->bounding_boxes[0].ymax;
+      bbox = Rect(Point(x1,y1),Point(x2,y2));
+      z = 1;
     }
 }
 
 
+
 int main( int argc, char** argv ){
+
   ros::init(argc, argv, "tracking");
 
   ros::NodeHandle nh;
   ros::Publisher image_pub = nh.advertise<sensor_msgs::Image>("/usb_cam/image_raw", 1);
-  ros::Subscriber tracking_sub = nh.subscribe("/darknet_ros/bounding_boxes", 100, personCallback);
+  ros::Publisher tracking_pub = nh.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
+  ros::Subscriber person_sub = nh.subscribe("/darknet_ros/bounding_boxes", 100, personCallback);
+  
+  Ptr<Tracker> tracker = TrackerKCF::create();
   cv::VideoCapture cap(0);
+  int frame_width = 640 ;
+  int frame_height = 480 ;
+  cv::Point2d frame_center(frame_width/2, frame_height/2);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, frame_height);
+  
   if (!cap.isOpened()) {
     ROS_ERROR("Cannot open camera");
     return -1;
   }
-
+  
   while (nh.ok()) {
     cv::Mat frame;
     cap >> frame;
@@ -95,12 +90,48 @@ int main( int argc, char** argv ){
     sensor_msgs::Image image_msg;
     cv_image.toImageMsg(image_msg);
     image_pub.publish(image_msg);
-
+    
+    if(z==1){
+      tracker->init(frame, bbox);
+      initTracking = true;
+      z = 2;
+    }
+    if(initTracking == true){
+      tracker->update(frame,bbox);
+      // tracker->getBoundingBox();
+      cv::Point2d center(bbox.x + bbox.width / 2.0, bbox.y + bbox.height / 2.0);
+      cv::circle(frame, center, 5, cv::Scalar(0, 255, 0), 2);
+      rectangle( frame, bbox, Scalar( 255, 0, 0 ), 2, 1 );
+      geometry_msgs::Twist goal_;
+      // angular
+      if (frame_center.x > center.x ){
+        goal_.angular.z = 0.5;
+      }
+      // else if (frame_center.x < center.x ){
+      //   goal_.angular.z = -0.5;
+      // }
+      // linear
+      if (frame_center.y > center.y ) {
+        goal_.linear.x = 0.5;
+      }
+      else if (frame_center.y < center.y ){
+        goal_.linear.x = -0.5;
+      }
+      
+      
+      tracking_pub.publish(goal_);
+    }
+  
+    imshow("tracker",frame);
+    if(waitKey(1)==27)break;            
+         
     
 
     ros::spinOnce();
   }
 
+  //quit on ESC button
+  
   // ros::NodeHandle nh;
   // ros::Subscriber tracking_sub = nh.subscribe("/darknet_ros/bounding_boxes", 100, personCallback);
   // ros::spin();
