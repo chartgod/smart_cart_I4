@@ -33,6 +33,7 @@ using namespace cv;
 int z = 10;
 Rect2d bbox;// Rect( Point( x1, y1 ), Point( x2, y2) );
 bool initTracking = false;
+// darknet_ros를 통한 사람객체 추출
 void personCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& person_) {
     if (person_->bounding_boxes[0].probability > 0.8 && z == 0){
       int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
@@ -50,12 +51,12 @@ void personCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& person_) {
       z = 1;
     }
 }
-
+//app에서 보낸 msg에 따라서 Tracking 기능 on/off
 void appCallback(const tracking::TrackingMsg::ConstPtr& app_msg) {
-  if (app_msg -> data == 0){
+  if (app_msg -> data == 0){ // tracking strat
     z = app_msg -> data;
   }
-  if(app_msg -> data == 10){
+  if(app_msg -> data == 10){ // tracking stop
     z = app_msg -> data;
     initTracking = false;
   }
@@ -71,8 +72,9 @@ int main( int argc, char** argv ){
   ros::Publisher tracking_pub = nh.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
   ros::Subscriber person_sub = nh.subscribe("/darknet_ros/bounding_boxes", 100, personCallback);
   ros::Subscriber tracking_msg_sub = nh.subscribe("/tracking/TrackingMsg", 100, appCallback);
-
+  // tracker 생성
   Ptr<Tracker> tracker = TrackerKCF::create();
+  // 카메라
   cv::VideoCapture cap(0);
   int frame_width = 640 ;
   int frame_height = 480 ;
@@ -102,6 +104,7 @@ int main( int argc, char** argv ){
     cv_image.toImageMsg(image_msg);
     image_pub.publish(image_msg);
     
+    // tracker
     if(z==1){
       tracker->init(frame, bbox);
       initTracking = true;
@@ -113,6 +116,8 @@ int main( int argc, char** argv ){
       cv::Point2d center(bbox.x + bbox.width / 2.0, bbox.y + bbox.height / 2.0);
       cv::circle(frame, center, 5, cv::Scalar(0, 255, 0), 2);
       rectangle( frame, bbox, Scalar( 255, 0, 0 ), 2, 1 );
+
+      // kobuki 기동
       geometry_msgs::Twist goal_;
       // angular
       if (frame_center.x > center.x ){
@@ -140,69 +145,5 @@ int main( int argc, char** argv ){
 
     ros::spinOnce();
   }
-
-  //quit on ESC button
-  
-  // ros::NodeHandle nh;
-  // ros::Subscriber tracking_sub = nh.subscribe("/darknet_ros/bounding_boxes", 100, personCallback);
-  // ros::spin();
-
-
-  // show help
-//   if(argc<2){
-//     cout<<
-//       " Usage: tracker <video_name>\n"
-//       " examples:\n"
-//       " example_tracking_kcf Bolt/img/%04d.jpg\n"
-//       " example_tracking_kcf faceocc2.webm\n"
-//       << endl;
-//     return 0;
-//   }
-
-
-
-
-//   // declares all required variables
-//   Rect2d roi;
-//   Mat frame;
-// //   create a tracker object
-// //   cv::Ptr<cv::TrackerKCF> tracker; 
-// //   tracker = cv::TrackerKCF::create();
-//   Ptr<Tracker> tracker = TrackerKCF::create();
-//   // set input video
-//   cv::VideoCapture cap(0);
-//   cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
-//   cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
-// //   std::string video = argv[1];
-// //   VideoCapture cap(video);
-//   // get bounding box
-//   cap >> frame;
-//   // roi=selectROI("tracker",frame);
-//   int x1 = 250, x2 = 300, y1 = 300, y2 = 350;
-//   roi = Rect(Point(x1,y1),Point(x2,y2));  // frame( Rect( Point( x1, y1 ), Point( x2, y2) ) )
-//   cout << "type(roi): " << typeid(roi).name() << endl;
-//   cout << "roi: " << roi << endl;
-//   //quit if ROI was not selected
-//   if(roi.width==0 || roi.height==0)
-//     return 0;
-//   // initialize the tracker
-//   tracker->init(frame,roi);
-//   // perform the tracking process
-//   printf("Start the tracking process, press ESC to quit.\n");
-//   for ( ;; ){
-//     // get frame from the video
-//     cap >> frame;
-//     // stop the program if no more images
-//     if(frame.rows==0 || frame.cols==0)
-//       break;
-//     // update the tracking result
-//     tracker->update(frame,roi);
-//     // draw the tracked object
-//     rectangle( frame, roi, Scalar( 255, 0, 0 ), 2, 1 );
-//     // show image with the tracked object
-//     imshow("tracker",frame);
-//     //quit on ESC button
-//     if(waitKey(1)==27)break;
-//   }
   return 0;
 }
